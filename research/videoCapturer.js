@@ -1,68 +1,37 @@
-var img = document.querySelector('img');
-
-    // navigator.mediaDevices.getUserMedia({video:true})
-    // .then((mediaStream)=> {
-
-    //     /*The MediaStream interface represents a stream of media content. 
-    //     A stream consists of several tracks such as video or audio tracks. 
-    //     Each track is specified as an instance of MediaStreamTrack.*/
-
-    //     console.log(mediaStream);
-    //     const mediaStreamTrack = mediaStream.getVideoTracks()[0];
-    //     console.log(mediaStreamTrack);
-
-    //     const imageCapture = new ImageCapture(mediaStreamTrack);
-    //     console.log(imageCapture);
-    //     return imageCapture;
-    // })
-    //     .then((imageCapture)=> imageCapture.takePhoto())
-    //         .then(blob => {
-    //             console.log(blob);
-    //             img.src = URL.createObjectURL(blob);
-    //             img.onload = () => {URL.revokeObjectURL(this.src); }
-    //         })
-    //         .catch(error => console.error('takePhoto() error:',error));
-
-    // const canvas = document.querySelector('canvas');
-
-    // navigator.mediaDevices.getUserMedia({video:true})
-    // .then((mediaStream)=> {
-
-    //     /*The MediaStream interface represents a stream of media content. 
-    //     A stream consists of several tracks such as video or audio tracks. 
-    //     Each track is specified as an instance of MediaStreamTrack.*/
-
-    //     console.log(mediaStream);
-    //     const mediaStreamTrack = mediaStream.getVideoTracks()[0];
-    //     console.log(mediaStreamTrack);
-
-    //     const imageCapture = new ImageCapture(mediaStreamTrack);
-    //     console.log(imageCapture);
-    //     return imageCapture;
-    // })
-    //     .then((imageCapture)=> imageCapture.grabFrame())
-    //         .then(imageBitmap => {
-    //             canvas.width = imageBitmap.width;
-    //             canvas.height = imageBitmap.height;
-    //             canvas.getContext('2d').drawImage(imageBitmap,0,0);
-    //         })
-    //         .catch(error => console.error('grabFrame() error:',error));
-
-
-
-
-
 // I created this video capturing algorithm with the help of the mediaStream API and canvas
 // with this, I can now have access of every bitmap as it is being received through the mediaTrack
 // I can then manipulate it any way I want
 
+const img = document.querySelector('img');
+const status = document.getElementById('status')
 const canvas = document.querySelector('canvas');
+const StartButton = document.getElementById('start');
+// const stopButton = document.getElementById('stop');
 
+StartButton.addEventListener('click',()=> {
+    init();
+})
+
+// stopButton.addEventListener('click',()=> stop())
+
+
+
+
+// determines the current confidence level of a color
+var confidence = 0;
+var intervals = [];
+// for testing. will help me limit the amount of console logs
+var logs = 0;
+
+const init = () => {
+    // stopButton.classList.remove('hidden');
+    StartButton.classList.add('hidden');
     navigator.mediaDevices.getUserMedia({video:true})
     .then((mediaStream)=> {
+        console.log(navigator.mediaDevices)
         // console.log(mediaStream);
         const mediaStreamTrack = mediaStream.getVideoTracks()[0];
-        console.log(mediaStreamTrack);
+        // console.log(mediaStreamTrack);
 
         const imageCapture = new ImageCapture(mediaStreamTrack);
         // console.log(imageCapture);
@@ -70,89 +39,32 @@ const canvas = document.querySelector('canvas');
     })
       .then((imageCapture)=> {
             setTimeout(()=>{
-                setInterval(()=> getVideoFrame(imageCapture),60)
+                let id = setInterval(()=> getVideoFrame(imageCapture),60);
+                intervals.push(id);
             },1000)
             
       });
 
-var logs = 0;
+     let id =  setInterval(()=>{
+        if (confidence > 2000) {
+            status.textContent = 'red'
+        } else {
+            status.textContent = 'not sure...'
+        }
+    },500)
+
+    intervals.push(id);
+}
 
 
-        // const getVideoFrame = (imageCapture) => {
-        //         imageCapture.grabFrame()
-        //         .then(imageBitmap => {
-        //             // if (logs < 5) console.log(imageBitmap);
-        //             logs++;
-        //             canvas.width = imageBitmap.width;
-        //             canvas.height = imageBitmap.height;
-        //             ctx = canvas.getContext('2d');
-        //             ctx.drawImage(imageBitmap,0,0);
-        //         })
-        //         .catch(error => console.error('grabFrame() error:',error));
-    
-        
-        // }
+// const stop = () => {
+//     stopButton.classList.add('hidden');
+//     StartButton.classList.remove('hidden');
+//     for( intervalId of intervals) {
+//         clearInterval(intervalId);
+//     }
+// }
 
-
-        // The focus now is to find out HOW to get specific information through a bitmap
-        // imagedata on the current canvas can be obtained by using createImageData() on the context
-        
-
-        // const getVideoFrame = (imageCapture) => {
-        //     imageCapture.grabFrame()
-        //     .then(imageBitmap => {
-        //         // if (logs < 5) console.log(imageBitmap);
-        //         logs++;
-        //         canvas.width = imageBitmap.width;
-        //         canvas.height = imageBitmap.height;
-        //         ctx = canvas.getContext('2d');
-        //         ctx.drawImage(imageBitmap,0,0);
-        //        if (logs < 5)console.log(ctx.createImageData(canvas.width,canvas.height).data);
-        //     })
-        //     .catch(error => console.error('grabFrame() error:',error));
-
-    
-        // }
-
-    /* imageData has a data property representing a one-dimensional 
-    array containing the data in the RGBA order, 
-    with integer values between 0 and 255 (included)*/
-
-
-
-    // const getVideoFrame = (imageCapture) => {
-    //     imageCapture.grabFrame()
-    //     .then(imageBitmap => {
-    //         // if (logs < 5) console.log(imageBitmap);
-    //         logs++;
-    //         canvas.width = imageBitmap.width;
-    //         canvas.height = imageBitmap.height;
-    //         ctx = canvas.getContext('2d');
-    //         ctx.drawImage(imageBitmap,0,0);
-    //         const imageData = ctx.createImageData(canvas.width,canvas.height);
-    //         manipulateData(imageData);
-    //     })
-    //     .catch(error => console.error('grabFrame() error:',error));
-
-    // }
-
-
-    // const manipulateData = (imageData) => {
-    //     const xCoord = 50;
-    //     const yCoord = 100;
-    //     const canvasWidth = canvas.width;
-
-    //     const getColorIndicesForCoord = (x, y, width) => {
-    //     const red = y * (width * 4) + x * 4;
-    //     return [red, red + 1, red + 2, red + 3];
-    //     };
-
-    //     const colorIndices = getColorIndicesForCoord(xCoord, yCoord, canvasWidth);
-    //     if (logs < 5) console.log(colorIndices);
-    //     const [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
-
-
-    // }
 
 
 
@@ -160,61 +72,59 @@ var logs = 0;
     const getVideoFrame = (imageCapture) => {
         imageCapture.grabFrame()
         .then(imageBitmap => {
-            // if (logs < 5) console.log(imageBitmap);
-            logs++;
+            // logs++;
             canvas.width = imageBitmap.width;
             canvas.height = imageBitmap.height;
             var ctx = canvas.getContext('2d');
             ctx.drawImage(imageBitmap,0,0);
         //    if (logs < 5)console.log(ctx.getImageData(0,0,canvas.width,canvas.height));
         let frame = ctx.getImageData(0,0,canvas.width,canvas.height);
-        let enhancedFrame = getColors(frame);
-        ctx.putImageData(enhancedFrame,0,0);
+        getColors(frame);
         })
         .catch(error => console.error('grabFrame() error:',error));
     }
 
+    const sumOf= (arr) =>{
+        return arr.reduce((sum,val)=> sum+val);
+    }
 
     const getColors = (frame) => {
+        // for every pixel there are four entries in the array representing RGB
+        // this data does not take alpha channel into account
+        confidence = 0;
         let length = frame.data.length / 4;
-        const bestContender = {index:null,distance:0};
-        for (let i =0; i < length; i++) {
+        for (let i = 0; i < length; i++) {
             let r = frame.data[i * 4 + 0];
             let g = frame.data[i * 4 + 1];
             let b = frame.data[i * 4 + 2];
             // if (logs < 5) console.log([r,g,b]);
-            // if (logs < 5) console.log(rgb);
-            let currentDistance = colorDistance(r,g,b,0,0,255);
-            if (currentDistance < 500) {
-            //    let x = (i / 4) % frame.width;
-            //    let y = Math.floor((i / 4) / frame.width)
-                // frame.data[i * 4 + 3] = 0;
-                if (!bestContender.index) {
-                    bestContender.index = i
-                    bestContender.distance = currentDistance;
-                    continue;
-                }
-
-                if (bestContender.distance > currentDistance) {
-                    bestContender.index = i
-                    bestContender.distance = currentDistance;
-                }
-            }   
+            let red = [255,0,0];
+            let currentDistance = colorDistance([r,g,b],red);
+            if (currentDistance <= sumOf(red)) {
+                confidence++;
+            }else {
+                confidence--;
+            }  
         }
-        frame.data[bestContender * 4 + 3] = 0;
-        return frame;
+        return;
     }
 
-    const colorDistance = (r1,g1,b1,r2,g2,b2) => {
-        rDistance = Math.abs(distance(r1,r2));
-        gDistance = Math.abs(distance(g1,g2));
-        bDistance = Math.abs(distance(b1,b2));
+
+    const colorDistance = (actualValues,targetValues) => {
+        // logs++;
+        rDistance = Math.abs(distance(actualValues[0],targetValues[0]));
+        gDistance = Math.abs(distance(actualValues[1],targetValues[1]));
+        bDistance = Math.abs(distance(actualValues[2],targetValues[2]));
+    //    if (logs < 10)console.log(rDistance + gDistance + bDistance)
         return rDistance + gDistance + bDistance;
     }
 
     const  distance = (a,b) => {
-        return Math.sqrt(a*a + b*b);
+        return a-b;
     }
+
+
+
     
 
 
