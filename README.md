@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -68,3 +69,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `yarn build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+=======
+# Synesthesia
+
+A simulation app that can capture and analyze a live video, 
+which is then converted into an audible sound, simulating the neurological condition known as Synesthesia. 
+
+*09/24/10 The app is currently in the early stages of development. I have researched how to change the pixel data of a live webcam feed. 
+With this knowledge, my next step will be to understand how I can track certain colors using rgb, 
+which can then be converted in to a certain sound frequency.
+>>>>>>> 2e7136d21120cb9f0523b5e60d35c3ce85703f71
